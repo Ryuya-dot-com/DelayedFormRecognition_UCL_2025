@@ -1,18 +1,39 @@
-// 単語リスト
+// 単語リスト（指定のリストに更新）
 const words = [
-    'alarm', 'barriers', 'basalt', 'coast', 'combustion', 
-    'communities', 'conflagration', 'deluge', 'drought', 'embankment', 
-    'epicenter', 'event', 'experts', 'famine', 'levee', 
-    'outage', 'path', 'region', 'reservoir', 'route', 
-    'rubble', 'soil', 'subduction', 'subsidence', 'technology', 
-    'torrent', 'tremor', 'vent', 'villages', 'vortex'
+    'basalt',
+    'combustion',
+    'conflagration',
+    'deluge',
+    'drought',
+    'embankment',
+    'epicenter',
+    'famine',
+    'levee',
+    'outage',
+    'reservoir',
+    'rubble',
+    'subduction',
+    'subsidence',
+    'torrent',
+    'tremor',
+    'vent',
+    'vortex',
+    'triage',
+    'reclamation',
+    'vestige',
+    'hydrology',
+    'pestilence',
+    'havoc',
+    'ballast',
+    'garment',
+    'innflux',
+    'blizzard'
 ];
 
 // グローバル変数
 let currentWordIndex = 0;
 let testResults = [];
 let currentAnswer = null;
-let wordStartTime = null;
 let testStartTime = null;
 let participantInfo = {};
 let shuffledWords = [];
@@ -25,16 +46,7 @@ function shuffleArray(arr) {
     }
 }
 
-// キーボードイベントリスナー
-document.addEventListener('keydown', (e) => {
-    if (document.getElementById('testScreen').classList.contains('active')) {
-        if (e.key.toLowerCase() === 'j' && !currentAnswer) {
-            selectAnswer('yes');
-        } else if (e.key.toLowerCase() === 'f' && !currentAnswer) {
-            selectAnswer('no');
-        }
-    }
-});
+// キーボード入力は使用しない（マウス操作のみ）
 
 // テスト開始（参加者情報入力後）
 function startTest() {
@@ -92,7 +104,6 @@ function showNextWord() {
     // 新しい単語を表示
     document.getElementById('currentWord').textContent = shuffledWords[currentWordIndex];
     updateProgress();
-    wordStartTime = Date.now();
 }
 
 // プログレスバーを更新
@@ -126,17 +137,13 @@ function selectAnswer(answer) {
 function selectConfidence(level, label, btnEl) {
     if (!currentAnswer) return;
     
-    // 反応時間（ms）
-    const reactionTimeMs = Date.now() - wordStartTime;
-    
     // 結果を保存
     testResults.push({
         wordIndex: currentWordIndex + 1,
         word: shuffledWords[currentWordIndex],
         answer: currentAnswer,
         confidence: level,
-        confidenceLabel: label,
-        reactionTimeMs: reactionTimeMs
+        confidenceLabel: label
     });
     
     // ビジュアルフィードバック
@@ -163,11 +170,11 @@ function endTest() {
 // 結果をCSV形式でエクスポート
 function exportResults() {
     // CSVヘッダー（小文字スネークケース）
-    let csv = 'participant_id,participant_name,test_date,total_time_ms,word_number,word,answer,confidence_level,confidence_label,reaction_time_ms\n';
+    let csv = 'participant_id,participant_name,test_date,total_time_ms,word_number,word,answer,confidence_level,confidence_label\n';
     
     // データ行を追加
     testResults.forEach((result) => {
-        csv += `${participantInfo.id},${participantInfo.name},${participantInfo.testDate},${participantInfo.totalTimeMs},${result.wordIndex},${result.word},${result.answer},${result.confidence},${result.confidenceLabel},${result.reactionTimeMs}\n`;
+        csv += `${participantInfo.id},${participantInfo.name},${participantInfo.testDate},${participantInfo.totalTimeMs},${result.wordIndex},${result.word},${result.answer},${result.confidence},${result.confidenceLabel}\n`;
     });
     
     // BOMを追加してExcelでの文字化けを防ぐ
